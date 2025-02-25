@@ -48,13 +48,43 @@ GET /api/resolve/0x1234567890abcdef1234567890abcdef12345678?services=ENS,Lens
 }
 ```
 
+### Reverse Resolve Handle
+
+**Endpoint:** `/api/reverse-resolve/:handle`
+
+**Method:** `GET`
+
+**Parameters:**
+
+- `handle` (required): The handle to reverse resolve.
+- `services` (optional): A comma-separated list of services to query. If not provided, all available resolvers will be used.
+
+**Response:**
+
+- `200 OK`: A JSON object containing the resolved addresses from the specified services.
+
+**Example Request:**
+
+```http
+GET /api/reverse-resolve/example.eth?services=ENS,Lens
+```
+
+**Example Response:**
+
+```json
+{
+  "ENS": "0x1234567890abcdef1234567890abcdef12345678",
+  "Lens": "0xabcdefabcdefabcdefabcdefabcdefabcdef"
+}
+```
+
 ## Development
 
 ### Setup
 
 1. Clone the repository.
-2. Install dependencies using `npm install`.
-3. Start the development server using `npm run dev`.
+2. Install dependencies using `pnpm install`.
+3. Start the development server using `pnpm run dev`.
 
 ## License
 
