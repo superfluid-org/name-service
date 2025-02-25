@@ -20,7 +20,7 @@ export const afResolver: Resolver = {
   name: "AlfaFrens",
   async getProfile(address) {
     try {
-      const response = await fetch(`http://localhost:3001/api/v0/getUserByTradingAddress?userAddress=${address}`)
+      const response = await fetch(`http://alfafrens.com/api/v0/getUserByTradingAddress?userAddress=${address}`)
       const data = (await response.json()) as AFProfileByTradingAddressResponse
 
       return {

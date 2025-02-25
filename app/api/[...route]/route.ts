@@ -1,8 +1,7 @@
 import { Hono } from "hono"
 import { handle } from "hono/vercel"
 import { cors } from "hono/cors"
-import { createPublicClient, http, isAddress } from "viem"
-import { mainnet } from "viem/chains"
+import { isAddress } from "viem"
 
 import { Profile, resolvers } from "@/app/resolvers"
 
@@ -10,11 +9,6 @@ import { Profile, resolvers } from "@/app/resolvers"
 export const runtime = "edge"
 
 // IMPLEMENTATION
-export const publicClient = createPublicClient({
-  chain: mainnet,
-  transport: http()
-})
-
 const app = new Hono().basePath("/api")
 app.use("/*", cors())
 
