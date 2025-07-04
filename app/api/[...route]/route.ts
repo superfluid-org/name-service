@@ -3,7 +3,7 @@ import { handle } from "hono/vercel"
 import { cors } from "hono/cors"
 import { isAddress } from "viem"
 
-import { Profile, resolvers } from "@/app/resolvers"
+import { Profile, resolvers, getRecommendedName, getRecommendedAvatar, ProfileWithRecommended } from "@/app/resolvers"
 
 // NEXTJS CONFIG
 export const runtime = "edge"
@@ -37,7 +37,13 @@ app.get("/resolve/:address", async c => {
     {} as Record<string, Profile | null>
   )
 
-  return c.json(mappedResults, 200, {
+  const responseWithRecommended = {
+    ...mappedResults,
+    recommendedName: getRecommendedName(mappedResults),
+    recommendedAvatar: getRecommendedAvatar(mappedResults)
+  }
+
+  return c.json(responseWithRecommended, 200, {
     "Cache-Control": "s-maxage=900, stale-while-revalidate=3600"
   })
 })
@@ -64,6 +70,15 @@ app.get("/reverse-resolve/:handle", async c => {
   return c.json(mappedResults, 200, {
     "Cache-Control": "s-maxage=900, stale-while-revalidate=3600"
   })
+})
+
+function getFullAvatarUrl(c: any): string {
+  const url = new URL(c.req.url)
+  return `${url.protocol}//${url.host}/assets/torex-avatar.png`
+}
+
+app.get("/torex-avatar-url", async c => {
+  return c.json({ url: getFullAvatarUrl(c) })
 })
 
 export const GET = handle(app)
