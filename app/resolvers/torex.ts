@@ -8,7 +8,6 @@ export interface TOREXInfo {
 }
 
 export const TOREX_ADDRESS_MAP: Record<number, TOREXInfo[]> = {
-  // Base Chain
   [base.id]: [
     {
       address: '0x267264cfb67b015ea23c97c07d609fbfc06adc17' as Address,
@@ -127,7 +126,6 @@ export const TOREX_ADDRESS_MAP: Record<number, TOREXInfo[]> = {
       name: 'ETHx → STREME TOREX',
     }
   ],
-  // Celo Chain
   [celo.id]: [
     {
       address: '0x96d2a59bb9ec295e1286d77f58d23a2198cca49b' as Address,
@@ -154,7 +152,6 @@ export const TOREX_ADDRESS_MAP: Record<number, TOREXInfo[]> = {
       name: 'CELOWETHx → cUSDx TOREX',
     }
   ],
-  // Optimism Chain
   [optimism.id]: [
     {
       address: '0x9c8b4be718489634a38999108c43381e55cf1e25' as Address,
@@ -173,7 +170,6 @@ export const TOREX_ADDRESS_MAP: Record<number, TOREXInfo[]> = {
       name: 'USDCx → ETHx TOREX',
     }
   ],
-  // Arbitrum Chain
   [arbitrum.id]: [
     {
       address: '0x5edddde592e42df8e9200e36e5c97af5b0b7e211' as Address,
