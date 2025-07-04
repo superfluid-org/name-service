@@ -92,7 +92,7 @@ export async function isTOREXAddress(address: string): Promise<boolean> {
 }
 
 function getAvatarBaseUrl(): string {
-  const deployUrl = process.env.VERCEL_URL
+  const deployUrl = process.env.BASE_URL
   if (deployUrl) {
     return deployUrl.startsWith('http') ? deployUrl : `https://${deployUrl}`
   }
