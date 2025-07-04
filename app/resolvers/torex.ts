@@ -14,9 +14,6 @@ const TOREX_GRAPHQL_ENDPOINTS: Record<number, string> = {
   [arbitrum.id]: 'https://api.goldsky.com/api/public/project_clsnd6xsoma5j012qepvucfpp/subgraphs/superboring_arbitrum-one/prod/gn'
 }
 
-const torexCache: Record<number, { data: TOREXInfo[], timestamp: number }> = {}
-const CACHE_DURATION = 24 * 60 * 60 * 1000 // 24 hours
-
 const TOREX_QUERY = `
   query MyQuery {
     torexes {
@@ -33,11 +30,6 @@ interface TorexResponse {
 }
 
 async function fetchTorexesForChain(chainId: number): Promise<TOREXInfo[]> {
-  const cached = torexCache[chainId]
-  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-    return cached.data
-  }
-
   const endpoint = TOREX_GRAPHQL_ENDPOINTS[chainId]
   if (!endpoint) {
     return []
@@ -51,7 +43,8 @@ async function fetchTorexesForChain(chainId: number): Promise<TOREXInfo[]> {
       },
       body: JSON.stringify({
         query: TOREX_QUERY
-      })
+      }),
+      next: { revalidate: 86400 } // 24 hours
     })
 
     if (!response.ok) {
@@ -59,58 +52,43 @@ async function fetchTorexesForChain(chainId: number): Promise<TOREXInfo[]> {
     }
 
     const result: TorexResponse = await response.json()
-    const torexes = result.data.torexes.map(torex => ({
+    return result.data.torexes.map(torex => ({
       id: torex.id.toLowerCase() as Address,
       name: torex.name
     }))
-
-    torexCache[chainId] = {
-      data: torexes,
-      timestamp: Date.now()
-    }
-
-    return torexes
   } catch (error) {
     console.error(`Failed to fetch TOREX data for chain ${chainId}:`, error)
-    return cached?.data || []
+    return []
   }
 }
 
-let globalTorexLookupMap: Record<string, TOREXInfo> = {}
-let lastGlobalUpdate = 0
-
-async function updateGlobalTorexLookupMap(): Promise<void> {
-  if (Date.now() - lastGlobalUpdate < CACHE_DURATION) {
-    return
-  }
-
+async function getAllTorexes(): Promise<Record<string, TOREXInfo>> {
   try {
     const allChains = Object.keys(TOREX_GRAPHQL_ENDPOINTS).map(Number)
     const allTorexes = await Promise.all(
       allChains.map(chainId => fetchTorexesForChain(chainId))
     )
 
-    globalTorexLookupMap = allTorexes
+    return allTorexes
       .flat()
       .reduce((acc, torex) => {
         acc[torex.id.toLowerCase()] = torex
         return acc
       }, {} as Record<string, TOREXInfo>)
-
-    lastGlobalUpdate = Date.now()
   } catch (error) {
-    console.error('Failed to update global TOREX lookup map:', error)
+    console.error('Failed to fetch TOREX data:', error)
+    return {}
   }
 }
 
 export async function getTOREXInfo(address: string): Promise<TOREXInfo | null> {
-  await updateGlobalTorexLookupMap()
-  return globalTorexLookupMap[address.toLowerCase()] || null
+  const allTorexes = await getAllTorexes()
+  return allTorexes[address.toLowerCase()] || null
 }
 
 export async function isTOREXAddress(address: string): Promise<boolean> {
-  await updateGlobalTorexLookupMap()
-  return address.toLowerCase() in globalTorexLookupMap
+  const allTorexes = await getAllTorexes()
+  return address.toLowerCase() in allTorexes
 }
 
 function getAvatarBaseUrl(): string {
@@ -143,10 +121,10 @@ export const torexResolver: Resolver = {
   },
   async getAddress(handle) {
     try {
-      await updateGlobalTorexLookupMap()
+      const allTorexes = await getAllTorexes()
       
-      const torexEntry = Object.values(globalTorexLookupMap).find(
-        torex => torex.name.toLowerCase() === handle.toLowerCase()
+      const torexEntry = Object.values(allTorexes).find(
+        (torex: TOREXInfo) => torex.name.toLowerCase() === handle.toLowerCase()
       )
       
       return torexEntry?.id || null
