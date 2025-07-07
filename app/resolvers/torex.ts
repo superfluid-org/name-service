@@ -112,7 +112,7 @@ export const torexResolver: Resolver = {
 
       const baseUrl = getAvatarBaseUrl()
       return {
-        handle: torexInfo.name,
+        handle: torexInfo.name + " TOREX",
         avatarUrl: `${baseUrl}/assets/torex-avatar.png`
       }
     } catch {
