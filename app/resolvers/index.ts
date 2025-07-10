@@ -14,12 +14,13 @@ export type Profile = {
 export type ProfileWithRecommended = Profile & {
   recommendedName: string | null
   recommendedAvatar: string | null
+  recommendedService: string | null
 }
 
 export interface Resolver {
   name: string
   getProfile(address: Address): Promise<Profile | null>
-  getAddress(handle: string): Promise<Address | null>
+  getAddress(handle: string): Promise<Profile | null>
 }
 
 export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResolver, afResolver].map(resolver => ({
@@ -48,4 +49,14 @@ export function getRecommendedAvatar(profiles: Record<string, Profile | null>): 
          profiles.Farcaster?.avatarUrl ||
          profiles.AlfaFrens?.avatarUrl ||
          null
+}
+
+export function getRecommendedService(profiles: Record<string, Profile | null>): string | null {
+  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens
+  // Return the service that provided either the recommended name OR avatar
+  if (profiles.TOREX?.handle || profiles.TOREX?.avatarUrl) return "TOREX"
+  if (profiles.ENS?.handle || profiles.ENS?.avatarUrl) return "ENS" 
+  if (profiles.Farcaster?.handle || profiles.Farcaster?.avatarUrl) return "Farcaster"
+  if (profiles.AlfaFrens?.handle || profiles.AlfaFrens?.avatarUrl) return "AlfaFrens"
+  return null
 }

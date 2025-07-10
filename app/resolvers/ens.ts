@@ -22,7 +22,8 @@ export const ensResolver: Resolver = {
 
       return {
         handle,
-        avatarUrl
+        avatarUrl,
+        address
       }
     } catch {
       return null
@@ -30,7 +31,20 @@ export const ensResolver: Resolver = {
   },
   async getAddress(handle) {
     try {
-      return await viemClient.getEnsAddress({ name: handle })
+      const address = await viemClient.getEnsAddress({ name: handle })
+      
+      if (!address) {
+        return null
+      }
+
+      // Get additional profile information for the resolved address
+      const avatarUrl = await viemClient.getEnsAvatar({ name: normalize(handle) })
+      
+      return {
+        handle,
+        avatarUrl,
+        address
+      }
     } catch {
       return null
     }

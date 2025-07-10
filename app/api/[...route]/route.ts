@@ -3,7 +3,7 @@ import { handle } from "hono/vercel"
 import { cors } from "hono/cors"
 import { isAddress } from "viem"
 
-import { Profile, resolvers, getRecommendedName, getRecommendedAvatar, ProfileWithRecommended } from "@/app/resolvers"
+import { Profile, resolvers, getRecommendedName, getRecommendedAvatar, getRecommendedService, ProfileWithRecommended } from "@/app/resolvers"
 
 // NEXTJS CONFIG
 export const runtime = "edge"
@@ -40,7 +40,8 @@ app.get("/resolve/:address", async c => {
   const responseWithRecommended = {
     ...mappedResults,
     recommendedName: getRecommendedName(mappedResults),
-    recommendedAvatar: getRecommendedAvatar(mappedResults)
+    recommendedAvatar: getRecommendedAvatar(mappedResults),
+    recommendedService: getRecommendedService(mappedResults)
   }
 
   return c.json(responseWithRecommended, 200, {
@@ -55,26 +56,29 @@ app.get("/reverse-resolve/:handle", async c => {
   const actualResolvers = services.length ? resolvers.filter(resolver => services.includes(resolver.name)) : resolvers
 
   const results = await Promise.all(
-    actualResolvers.map(async resolver => [resolver.name, await resolver.getAddress(handle)] as [string, string | null])
+    actualResolvers.map(async resolver => [resolver.name, await resolver.getAddress(handle)] as [string, Profile | null])
   )
 
   const mappedResults = results.reduce(
-    (acc, [name, address]) => {
-      acc[name] = address
+    (acc, [name, profile]) => {
+      acc[name] = profile
       return acc
     },
-    {} as Record<string, string | null>
+    {} as Record<string, Profile | null>
   )
 
-  if (mappedResults.ENS && isAddress(mappedResults.ENS)) {
+  // Check if any resolver returned a valid profile with an address
+  const validProfile = Object.values(mappedResults).find(profile => profile?.address)
+  
+  if (validProfile?.address && isAddress(validProfile.address)) {
     try {
       const profileResults = await Promise.all(
         actualResolvers.map(
-          async resolver => [resolver.name, await resolver.getProfile(mappedResults.ENS as `0x${string}`)] as [string, Profile | null]
+          async resolver => [resolver.name, await resolver.getProfile(validProfile.address as `0x${string}`)] as [string, Profile | null]
         )
       )
 
-      const profiles = profileResults.reduce(
+      const enhancedProfiles = profileResults.reduce(
         (acc, [name, profile]) => {
           acc[name] = profile
           return acc
@@ -82,36 +86,45 @@ app.get("/reverse-resolve/:handle", async c => {
         {} as Record<string, Profile | null>
       )
 
-      const enhancedResults = Object.keys(mappedResults).reduce((acc, serviceName) => {
-        const address = mappedResults[serviceName]
-        const profile = profiles[serviceName]
+      // Merge enhanced profiles with original reverse lookup results
+      // Use enhanced profile if it has data, otherwise keep original reverse lookup result
+      const finalResults = Object.keys(mappedResults).reduce((acc, serviceName) => {
+        const originalProfile = mappedResults[serviceName]
+        const enhancedProfile = enhancedProfiles[serviceName]
         
-        if (profile) {
-          acc[serviceName] = {
-            address,
-            ...profile
-          }
+        // Use enhanced profile if it has meaningful data (handle or avatar), otherwise use original
+        if (enhancedProfile && (enhancedProfile.handle || enhancedProfile.avatarUrl)) {
+          acc[serviceName] = enhancedProfile
         } else {
-          acc[serviceName] = address
+          acc[serviceName] = originalProfile
         }
         
         return acc
       }, {} as Record<string, any>)
 
-      // Add recommended fields
-      enhancedResults.recommendedName = getRecommendedName(profiles)
-      enhancedResults.recommendedAvatar = getRecommendedAvatar(profiles)
+      // Add recommended fields based on the enhanced profiles
+      finalResults.recommendedName = getRecommendedName(enhancedProfiles)
+      finalResults.recommendedAvatar = getRecommendedAvatar(enhancedProfiles)
+      finalResults.recommendedService = getRecommendedService(enhancedProfiles)
 
-      return c.json(enhancedResults, 200, {
+      return c.json(finalResults, 200, {
         "Cache-Control": "s-maxage=900, stale-while-revalidate=3600"
       })
     } catch (error) {
-      // If profile lookup fails, just return the original results
-      console.error("Failed to lookup profiles for ENS address:", error)
+      // If profile lookup fails, just return the original results with recommended fields
+      console.error("Failed to lookup profiles:", error)
     }
   }
 
-  return c.json(mappedResults, 200, {
+  // Add recommended fields based on the reverse lookup results
+  const responseWithRecommended = {
+    ...mappedResults,
+    recommendedName: getRecommendedName(mappedResults),
+    recommendedAvatar: getRecommendedAvatar(mappedResults),
+    recommendedService: getRecommendedService(mappedResults)
+  }
+
+  return c.json(responseWithRecommended, 200, {
     "Cache-Control": "s-maxage=900, stale-while-revalidate=3600"
   })
 })

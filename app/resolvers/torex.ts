@@ -113,7 +113,8 @@ export const torexResolver: Resolver = {
       const baseUrl = getAvatarBaseUrl()
       return {
         handle: torexInfo.name + " TOREX",
-        avatarUrl: `${baseUrl}/assets/torex-avatar.png`
+        avatarUrl: `${baseUrl}/assets/torex-avatar.png`,
+        address
       }
     } catch {
       return null
@@ -127,7 +128,16 @@ export const torexResolver: Resolver = {
         (torex: TOREXInfo) => torex.name.toLowerCase() === handle.toLowerCase()
       )
       
-      return torexEntry?.id || null
+      if (!torexEntry) {
+        return null
+      }
+
+      const baseUrl = getAvatarBaseUrl()
+      return {
+        handle: torexEntry.name + " TOREX",
+        avatarUrl: `${baseUrl}/assets/torex-avatar.png`,
+        address: torexEntry.id
+      }
     } catch {
       return null
     }

@@ -36,7 +36,18 @@ export const afResolver: Resolver = {
     try {
       const response = await fetch(`https://alfafrens.com/api/v0/getUserByAddress?userAddress=${handle}`)
       const data = (await response.json()) as AFProfileByAddressResponse
-      return getAddress(data.userAddress || "")
+      
+      if (!data.userAddress) {
+        return null
+      }
+
+      const address = getAddress(data.userAddress)
+      
+      return {
+        handle: data.handle || null,
+        avatarUrl: null, // AF doesn't provide avatar URL in this endpoint
+        address
+      }
     } catch {
       return null
     }

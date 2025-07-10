@@ -104,7 +104,12 @@ export const farcasterResolver: Resolver = {
         return null
       }
 
-      return getAddress(data.user.verified_addresses.eth_addresses[0])
+      const user = data.user
+      return {
+        handle: user.username || null,
+        avatarUrl: user.pfp_url || null,
+        address: getAddress(user.verified_addresses.eth_addresses[0])
+      }
     } catch (error) {
       console.error("Farcaster getAddress error:", error)
       return null
