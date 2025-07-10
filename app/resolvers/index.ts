@@ -3,12 +3,12 @@ import { Address } from "viem"
 import { afResolver } from "./af"
 import { ensResolver } from "./ens"
 import { farcasterResolver } from "./farcaster"
-import { lensResolver } from "./lens"
 import { torexResolver } from "./torex"
 
 export type Profile = {
   handle: string | null
   avatarUrl: string | null
+  address?: string | null
 }
 
 export type ProfileWithRecommended = Profile & {
@@ -22,7 +22,7 @@ export interface Resolver {
   getAddress(handle: string): Promise<Address | null>
 }
 
-export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResolver, afResolver, lensResolver].map(resolver => ({
+export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResolver, afResolver].map(resolver => ({
   ...resolver,
   getProfile: async (address: Address) => {
     console.time(`getProfile ${resolver.name}`)
@@ -33,21 +33,19 @@ export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResol
 }))
 
 export function getRecommendedName(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens -> Lens
+  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens
   return profiles.TOREX?.handle ||
          profiles.ENS?.handle ||
          profiles.Farcaster?.handle ||
          profiles.AlfaFrens?.handle ||
-         profiles.Lens?.handle ||
          null
 }
 
 export function getRecommendedAvatar(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens -> Lens
+  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens
   return profiles.TOREX?.avatarUrl ||
          profiles.ENS?.avatarUrl ||
          profiles.Farcaster?.avatarUrl ||
          profiles.AlfaFrens?.avatarUrl ||
-         profiles.Lens?.avatarUrl ||
          null
 }

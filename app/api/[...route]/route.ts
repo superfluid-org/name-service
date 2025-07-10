@@ -61,11 +61,55 @@ app.get("/reverse-resolve/:handle", async c => {
   const mappedResults = results.reduce(
     (acc, [name, address]) => {
       acc[name] = address
-
       return acc
     },
     {} as Record<string, string | null>
   )
+
+  if (mappedResults.ENS && isAddress(mappedResults.ENS)) {
+    try {
+      const profileResults = await Promise.all(
+        actualResolvers.map(
+          async resolver => [resolver.name, await resolver.getProfile(mappedResults.ENS as `0x${string}`)] as [string, Profile | null]
+        )
+      )
+
+      const profiles = profileResults.reduce(
+        (acc, [name, profile]) => {
+          acc[name] = profile
+          return acc
+        },
+        {} as Record<string, Profile | null>
+      )
+
+      const enhancedResults = Object.keys(mappedResults).reduce((acc, serviceName) => {
+        const address = mappedResults[serviceName]
+        const profile = profiles[serviceName]
+        
+        if (profile) {
+          acc[serviceName] = {
+            address,
+            ...profile
+          }
+        } else {
+          acc[serviceName] = address
+        }
+        
+        return acc
+      }, {} as Record<string, any>)
+
+      // Add recommended fields
+      enhancedResults.recommendedName = getRecommendedName(profiles)
+      enhancedResults.recommendedAvatar = getRecommendedAvatar(profiles)
+
+      return c.json(enhancedResults, 200, {
+        "Cache-Control": "s-maxage=900, stale-while-revalidate=3600"
+      })
+    } catch (error) {
+      // If profile lookup fails, just return the original results
+      console.error("Failed to lookup profiles for ENS address:", error)
+    }
+  }
 
   return c.json(mappedResults, 200, {
     "Cache-Control": "s-maxage=900, stale-while-revalidate=3600"

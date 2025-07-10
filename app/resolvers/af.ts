@@ -24,8 +24,9 @@ export const afResolver: Resolver = {
       const data = (await response.json()) as AFProfileByTradingAddressResponse
 
       return {
-        handle: data.userAddress || null,
-        avatarUrl: data.profileImgUrl || null
+        handle: data.handle || null,
+        avatarUrl: data.profileImgUrl || null,
+        address: data.userAddress || null
       }
     } catch {
       return null
