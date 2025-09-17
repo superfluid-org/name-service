@@ -3,7 +3,7 @@ import { handle } from "hono/vercel"
 import { cors } from "hono/cors"
 import { isAddress } from "viem"
 
-import { Profile, resolvers, getRecommendedName, getRecommendedAvatar, getRecommendedService, ProfileWithRecommended } from "@/app/resolvers"
+import { Profile, resolvers, getRecommendedName, getRecommendedAvatar, getRecommendedService } from "@/app/resolvers"
 
 // NEXTJS CONFIG
 export const runtime = "edge"

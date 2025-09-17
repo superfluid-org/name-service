@@ -1,6 +1,5 @@
 import { Address } from "viem"
 
-import { afResolver } from "./af"
 import { ensResolver } from "./ens"
 import { farcasterResolver } from "./farcaster"
 import { torexResolver } from "./torex"
@@ -23,7 +22,7 @@ export interface Resolver {
   getAddress(handle: string): Promise<Profile | null>
 }
 
-export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResolver, afResolver].map(resolver => ({
+export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResolver].map(resolver => ({
   ...resolver,
   getProfile: async (address: Address) => {
     console.time(`getProfile ${resolver.name}`)
@@ -34,29 +33,26 @@ export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResol
 }))
 
 export function getRecommendedName(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens
+  // Priority order: TOREX -> ENS -> Farcaster
   return profiles.TOREX?.handle ||
          profiles.ENS?.handle ||
          profiles.Farcaster?.handle ||
-         profiles.AlfaFrens?.handle ||
          null
 }
 
 export function getRecommendedAvatar(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens
+  // Priority order: TOREX -> ENS -> Farcaster
   return profiles.TOREX?.avatarUrl ||
          profiles.ENS?.avatarUrl ||
          profiles.Farcaster?.avatarUrl ||
-         profiles.AlfaFrens?.avatarUrl ||
          null
 }
 
 export function getRecommendedService(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster -> AlfaFrens
+  // Priority order: TOREX -> ENS -> Farcaster
   // Return the service that provided either the recommended name OR avatar
   if (profiles.TOREX?.handle || profiles.TOREX?.avatarUrl) return "TOREX"
   if (profiles.ENS?.handle || profiles.ENS?.avatarUrl) return "ENS" 
   if (profiles.Farcaster?.handle || profiles.Farcaster?.avatarUrl) return "Farcaster"
-  if (profiles.AlfaFrens?.handle || profiles.AlfaFrens?.avatarUrl) return "AlfaFrens"
   return null
 }
