@@ -102,10 +102,10 @@ app.get("/reverse-resolve/:handle", async c => {
         return acc
       }, {} as Record<string, any>)
 
-      // Add recommended fields based on the enhanced profiles
-      finalResults.recommendedName = getRecommendedName(enhancedProfiles)
-      finalResults.recommendedAvatar = getRecommendedAvatar(enhancedProfiles)
-      finalResults.recommendedService = getRecommendedService(enhancedProfiles)
+      // Add recommended fields based on the final merged results
+      finalResults.recommendedName = getRecommendedName(finalResults)
+      finalResults.recommendedAvatar = getRecommendedAvatar(finalResults)
+      finalResults.recommendedService = getRecommendedService(finalResults)
 
       return c.json(finalResults, 200, {
         "Cache-Control": "s-maxage=900, stale-while-revalidate=3600"
