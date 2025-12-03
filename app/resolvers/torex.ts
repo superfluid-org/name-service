@@ -26,7 +26,7 @@ const TOREX_GRAPHQL_ENDPOINTS: Record<number, string> = {
 
 const TOREX_QUERY = `
   query MyQuery {
-    torexes {
+    torexes(first: 1000) {
       id
       name
     }
