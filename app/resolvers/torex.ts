@@ -7,6 +7,16 @@ export interface TOREXInfo {
   name: string;
 }
 
+// Deprecated torexes - these will have their names prefixed with "Deprecated: "
+const DEPRECATED_TOREXES: Record<number, Address[]> = {
+  [base.id]: [
+    "0xfdf3e44ca7fe2006c3b5c20cf8fcf5c556dc19be",
+    "0x727dd7ec3f3398afb655528a5076062a4a73ad6a",
+    "0xdc6ed4fe13280b8257267162a32526078a3defa5",
+    "0x8a9570a982ada64fe4a4336e88b133c02886488d",
+  ],
+}
+
 const TOREX_GRAPHQL_ENDPOINTS: Record<number, string> = {
   [base.id]: 'https://api.goldsky.com/api/public/project_clsnd6xsoma5j012qepvucfpp/subgraphs/superboring_base-mainnet/prod/gn',
   [optimism.id]: 'https://api.goldsky.com/api/public/project_clsnd6xsoma5j012qepvucfpp/subgraphs/superboring_optimism-mainnet/prod/gn',
@@ -27,6 +37,11 @@ interface TorexResponse {
   data: {
     torexes: TOREXInfo[]
   }
+}
+
+function isDeprecatedTorex(chainId: number, address: Address): boolean {
+  const deprecatedList = DEPRECATED_TOREXES[chainId] || []
+  return deprecatedList.some(addr => addr.toLowerCase() === address.toLowerCase())
 }
 
 async function fetchTorexesForChain(chainId: number): Promise<TOREXInfo[]> {
@@ -52,10 +67,14 @@ async function fetchTorexesForChain(chainId: number): Promise<TOREXInfo[]> {
     }
 
     const result: TorexResponse = await response.json()
-    return result.data.torexes.map(torex => ({
-      id: torex.id.toLowerCase() as Address,
-      name: torex.name
-    }))
+    return result.data.torexes.map(torex => {
+      const id = torex.id.toLowerCase() as Address
+      const isDeprecated = isDeprecatedTorex(chainId, id)
+      return {
+        id,
+        name: isDeprecated ? `Deprecated: ${torex.name}` : torex.name
+      }
+    })
   } catch (error) {
     console.error(`Failed to fetch TOREX data for chain ${chainId}:`, error)
     return []
@@ -100,20 +119,27 @@ function getAvatarBaseUrl(): string {
   return 'http://localhost:3000'
 }
 
+function getAvatarUrl(baseUrl: string, isDeprecated: boolean): string {
+  return isDeprecated
+    ? `${baseUrl}/assets/deprecated-torex-avatar.svg`
+    : `${baseUrl}/assets/torex-avatar.png`
+}
+
 export const torexResolver: Resolver = {
   name: "TOREX",
   async getProfile(address) {
     try {
       const torexInfo = await getTOREXInfo(address)
-      
+
       if (!torexInfo) {
         return null
       }
 
       const baseUrl = getAvatarBaseUrl()
+      const isDeprecated = torexInfo.name.startsWith("Deprecated:")
       return {
         handle: torexInfo.name + " TOREX",
-        avatarUrl: `${baseUrl}/assets/torex-avatar.png`,
+        avatarUrl: getAvatarUrl(baseUrl, isDeprecated),
         address
       }
     } catch {
@@ -123,19 +149,20 @@ export const torexResolver: Resolver = {
   async getAddress(handle) {
     try {
       const allTorexes = await getAllTorexes()
-      
+
       const torexEntry = Object.values(allTorexes).find(
         (torex: TOREXInfo) => torex.name.toLowerCase() === handle.toLowerCase()
       )
-      
+
       if (!torexEntry) {
         return null
       }
 
       const baseUrl = getAvatarBaseUrl()
+      const isDeprecated = torexEntry.name.startsWith("Deprecated:")
       return {
         handle: torexEntry.name + " TOREX",
-        avatarUrl: `${baseUrl}/assets/torex-avatar.png`,
+        avatarUrl: getAvatarUrl(baseUrl, isDeprecated),
         address: torexEntry.id
       }
     } catch {
