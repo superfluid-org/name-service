@@ -5,7 +5,7 @@ import { Resolver } from "."
 
 const viemClient = createPublicClient({
   chain: mainnet,
-  transport: http()
+  transport: http("https://rpc-endpoints.superfluid.dev/eth-mainnet")
 })
 
 export const ensResolver: Resolver = {
