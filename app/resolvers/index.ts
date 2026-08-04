@@ -2,6 +2,7 @@ import { Address } from "viem"
 
 import { ensResolver } from "./ens"
 import { farcasterResolver } from "./farcaster"
+import { polyThemesResolver } from "./polythemes"
 import { torexResolver } from "./torex"
 
 export type Profile = {
@@ -22,7 +23,7 @@ export interface Resolver {
   getAddress(handle: string): Promise<Profile | null>
 }
 
-export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResolver].map(resolver => ({
+export const resolvers: Resolver[] = [polyThemesResolver, torexResolver, ensResolver, farcasterResolver].map(resolver => ({
   ...resolver,
   getProfile: async (address: Address) => {
     console.time(`getProfile ${resolver.name}`)
@@ -33,26 +34,29 @@ export const resolvers: Resolver[] = [torexResolver, ensResolver, farcasterResol
 }))
 
 export function getRecommendedName(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster
-  return profiles.TOREX?.handle ||
+  // Priority order: PolyThemes -> TOREX -> ENS -> Farcaster
+  return profiles.PolyThemes?.handle ||
+         profiles.TOREX?.handle ||
          profiles.ENS?.handle ||
          profiles.Farcaster?.handle ||
          null
 }
 
 export function getRecommendedAvatar(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster
-  return profiles.TOREX?.avatarUrl ||
+  // Priority order: PolyThemes -> TOREX -> ENS -> Farcaster
+  return profiles.PolyThemes?.avatarUrl ||
+         profiles.TOREX?.avatarUrl ||
          profiles.ENS?.avatarUrl ||
          profiles.Farcaster?.avatarUrl ||
          null
 }
 
 export function getRecommendedService(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: TOREX -> ENS -> Farcaster
+  // Priority order: PolyThemes -> TOREX -> ENS -> Farcaster
   // Return the service that provided either the recommended name OR avatar
+  if (profiles.PolyThemes?.handle || profiles.PolyThemes?.avatarUrl) return "PolyThemes"
   if (profiles.TOREX?.handle || profiles.TOREX?.avatarUrl) return "TOREX"
-  if (profiles.ENS?.handle || profiles.ENS?.avatarUrl) return "ENS" 
+  if (profiles.ENS?.handle || profiles.ENS?.avatarUrl) return "ENS"
   if (profiles.Farcaster?.handle || profiles.Farcaster?.avatarUrl) return "Farcaster"
   return null
 }
