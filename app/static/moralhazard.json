@@ -7,12 +7,12 @@
   "8453": [
     {
       "handle": "Moral Hazard SUP Game",
-      "avatarUrl": "https://moralhazard.stream/logo-symbol-animated.svg",
+      "avatarUrl": "/assets/moralhazard-avatar.svg",
       "address": "0x1FF0cEbDabd7a216Ee3948AA050D6c6D6fD78F1E"
     },
     {
       "handle": "Moral Hazard USDCx Game",
-      "avatarUrl": "https://moralhazard.stream/logo-symbol-animated.svg",
+      "avatarUrl": "/assets/moralhazard-avatar.svg",
       "address": "0x3A62B053A9131FA62B640473EF5d57A05f6480A9"
     }
   ],
@@ -26,19 +26,19 @@
   "84532": [
     {
       "handle": "Moral Hazard fUSDCx Game",
-      "avatarUrl": "https://moralhazard.stream/logo-symbol-animated.svg",
+      "avatarUrl": "/assets/moralhazard-avatar.svg",
       "address": "0xCF56AE77dE98E8bC5CD606d83154b9910850b897"
     },
     {
       "handle": "Moral Hazard fDAIx Game",
-      "avatarUrl": "https://moralhazard.stream/logo-symbol-animated.svg",
+      "avatarUrl": "/assets/moralhazard-avatar.svg",
       "address": "0x02fD0787CCFF3D5Ba0851E0cd1666C1E7573C7fa"
     }
   ],
   "5042002": [
     {
       "handle": "Moral Hazard USDCx Game",
-      "avatarUrl": "https://moralhazard.stream/logo-symbol-animated.svg",
+      "avatarUrl": "/assets/moralhazard-avatar.svg",
       "address": "0xf9f72DD13304519a68AA71fd7DB2a3496CDa9696"
     }
   ]

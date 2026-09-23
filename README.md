@@ -78,6 +78,55 @@ GET /api/reverse-resolve/example.eth?services=ENS,Lens
 }
 ```
 
+## Static Entries
+
+Some addresses are known contracts rather than accounts with an ENS or Farcaster profile —
+protocol contracts, game contracts, treasuries. These are declared as static data in
+`app/static/` instead of being looked up over the network, and are served by
+`app/resolvers/static.ts`.
+
+A registry file is keyed by chain id, and each entry is already in the shape the API
+returns:
+
+```json
+{
+  "8453": [
+    {
+      "handle": "Moral Hazard SUP Game",
+      "avatarUrl": "/assets/moralhazard-avatar.svg",
+      "address": "0x1FF0cEbDabd7a216Ee3948AA050D6c6D6fD78F1E"
+    }
+  ],
+  "84532": []
+}
+```
+
+`avatarUrl` may be a path relative to this deployment (resolved against `BASE_URL`, so put
+the image in `public/assets/`) or an absolute `https://` URL.
+
+### Adding a project
+
+1. Add `app/static/<project>.json` using the shape above. Chains with no entries yet can be
+   left as empty arrays.
+2. Register it in `REGISTRIES` in `app/resolvers/static.ts`:
+
+   ```ts
+   import myProject from "@/app/static/myproject.json"
+
+   const REGISTRIES: { service: string; registry: StaticRegistry }[] = [
+     { service: "MoralHazard", registry: moralHazard },
+     { service: "MyProject", registry: myProject }
+   ]
+   ```
+
+The `service` name becomes the key in the API response and the value accepted by the
+`services` query parameter. Registries are imported statically because the edge runtime
+cannot enumerate files at runtime.
+
+Lookups are case-insensitive in both directions. Addresses are unique per registry, so
+address lookup is exact; if the same handle appears on several chains, mainnet entries take
+precedence over testnets when reverse-resolving a name.
+
 ## Development
 
 ### Setup

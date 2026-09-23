@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="MoralHazard-Symbol-" xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 512 512">
+  <defs>
+    <style>
+
+      .isStroke {
+        fill: none;
+      }
+
+      .strokeLine {
+        stroke-miterlimit: 12.8;
+        stroke-width: 12px;
+        stroke-dasharray: 200 200;
+        animation-name: distributions;
+        animation-duration: 10s;
+        animation-timing-function linear: 
+        animation-delay: 0s;
+        animation-direction: reverse; 
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      .strokeDashed {
+        stroke-dasharray: 15 10;
+        stroke-miterlimit: 10;
+        stroke-width: 10px;
+
+        animation-name: streams;
+        animation-duration: 1s;
+        animation-timing-function linear: 
+        animation-delay: 0s;
+        animation-direction: reverse; 
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+      }
+
+      .strokeBlack {
+        stroke: #000000;
+      }
+
+      .fillBlack {
+        fill: #000000;
+      }
+
+      .fillWhite {
+        fill: #FFFFFF;
+      }
+
+      #BigCircleCut-Black,
+      #SmallCircleCut-Black {
+        animation-delay: 0s;
+        animation-direction: alternate; 
+        animation-iteration-count: infinite;
+        animation-timing-function: ease-in-out;
+        transform-origin: center;      
+      }
+
+      #BigCircleCut-Black {
+        animation-name: bigCircleBlack;
+        animation-duration: 5s;
+      }
+
+      #SmallCircleCut-Black {
+        animation-name: smallCircleBlack;
+        animation-duration: 7s;
+      }
+
+      #DistributionLine-Top {
+        animation-delay: 0s;
+      }
+
+      #DistribtuionLine-Middle {
+        animation-delay: 0.25s;
+      }
+
+      #DistributionLine-Down {
+        animation-delay: 0.5s;
+      }     
+
+      #StreamLine-Top {
+        animation-delay: 0s;
+      }
+
+      #StreamLine-Middle {
+        animation-delay: 0.25s;
+      }
+
+      #StreamLine-Down {
+        animation-delay: 0.5s;
+      }     
+
+
+      @keyframes streams {
+        0% {
+          stroke-dashoffset: 0;
+        }
+      
+        100% {
+          stroke-dashoffset: 100;
+        }
+      }
+
+
+      @keyframes distributions {
+        0% {
+          stroke-dashoffset: 0;
+        }
+
+        70% {
+          stroke-dashoffset: 0;
+        }
+        90% {
+          stroke-dashoffset: 400;
+        }
+        100% {
+          stroke-dashoffset: 400;
+        }
+      }
+
+      @keyframes bigCircleBlack {
+        0% {
+          transform: rotateZ(-15deg);
+        }
+        0% {
+          transform: rotateZ(5deg);
+        }
+        0% {
+          transform: rotateZ(-7deg);
+        }      
+        100% {
+          transform: rotateZ(15deg);       
+        }
+      }
+
+      @keyframes smallCircleBlack {
+        0% {
+          transform: rotateZ(4deg);
+        }
+        0% {
+          transform: rotateZ(-7deg);
+        }
+        0% {
+          transform: rotateZ(3deg);
+        }      
+        100% {
+          transform: rotateZ(0deg);       
+        }
+      }
+
+
+
+
+
+
+      #MoralHazard-Symbol-Gr {
+
+      }
+
+      #OuterRing-Black {
+      }
+
+
+      #OuterRing-White {
+      }
+
+
+      #BigCircle-White {
+      }
+
+  
+      #SmallCircle-White {
+      }
+
+  
+
+
+      #Item-Down,
+      #Item-Middle,
+      #Item-Top {
+
+      }
+
+
+      #BadStreamSpot-Top,
+      #BadStreamSpot-Middle,
+      #BadStreamSpot-Down {
+      }
+
+      #DistributionLine-Top,
+      #DistribtuionLine-Middle,
+      #DistributionLine-Down {
+      }
+
+      #StreamLine-Top,
+      #StreamLine-Middle,
+      #StreamLine-Down {
+      }
+
+    </style>
+  </defs>
+  <g id="MoralHazard-Symbol-Group">
+    <g id="OuterRing-Black" class="fillBlack">
+      <path d="M256,10c33.21417,0,65.42953,6.50282,95.75128,19.32782,29.29227,12.38955,55.60153,30.12845,78.19699,52.72391,22.59546,22.59545,40.33435,48.90472,52.72391,78.19701,12.82501,30.32172,19.32782,62.53708,19.32782,95.75127s-6.50281,65.42953-19.32782,95.75128c-12.38956,29.29227-30.12845,55.60153-52.72391,78.19699s-48.90472,40.33435-78.19699,52.72391c-30.32175,12.82501-62.53711,19.32782-95.75128,19.32782s-65.42955-6.50281-95.75127-19.32782c-29.29228-12.38956-55.60155-30.12845-78.19701-52.72391-22.59546-22.59546-40.33436-48.90472-52.72391-78.19699-12.825-30.32175-19.32782-62.53711-19.32782-95.75128s6.50282-65.42955,19.32782-95.75127c12.38955-29.29228,30.12845-55.60155,52.72391-78.19701,22.59545-22.59546,48.90472-40.33436,78.19701-52.72391,30.32172-12.825,62.53708-19.32782,95.75127-19.32782M256,0C114.61509,0,0,114.61509,0,256s114.61509,256,256,256,256-114.61508,256-256S397.38492,0,256,0h0Z"/>
+    </g>
+    <g id="OuterRing-White" class="fillWhite">
+      <path class="st0" d="M256,20c31.8642,0,62.76999,6.23845,91.85883,18.54191,28.10153,11.886,53.34137,28.90382,75.01834,50.58091,21.67709,21.67709,38.69492,46.91692,50.58093,75.01845,12.30344,29.08882,18.5419,59.99455,18.5419,91.85873s-6.23846,62.76999-18.5419,91.85883c-11.88602,28.10153-28.90384,53.34137-50.58093,75.01834-21.67697,21.67709-46.91681,38.69492-75.01834,50.58093-29.08884,12.30344-59.99463,18.5419-91.85883,18.5419s-62.76991-6.23846-91.85873-18.5419c-28.10153-11.88602-53.34135-28.90384-75.01845-50.58093-21.67709-21.67697-38.69491-46.91681-50.58091-75.01834-12.30345-29.08884-18.54191-59.99463-18.54191-91.85883s6.23845-62.76991,18.54191-91.85873c11.886-28.10153,28.90382-53.34135,50.58091-75.01845s46.91692-38.69491,75.01845-50.58091c29.08882-12.30345,59.99455-18.54191,91.85873-18.54191M256,10C120.138,10,10,120.138,10,256s110.138,246,246,246,246-110.13791,246-246S391.86209,10,256,10h0Z"/>
+    </g>
+    <circle id="BigCircle-White" class="fillWhite" cx="256" cy="256" r="236"/>
+    <path id="BigCircleCut-Black" class="fillBlack" d="M317.5614,28.12842c-19.62811-5.28992-40.26178-8.12842-61.5614-8.12842C125.66083,20,20,125.66077,20,256c0,109.37939,74.41638,201.36523,175.37769,228.12567L317.5614,28.12842Z"/>
+    <circle id="SmallCircle-White" class="fillWhite" cx="256" cy="256" r="50"/>
+    <path id="SmallCircleCut-Black" class="fillBlack" d="M269.40967,207.83368l-25.88312,96.59735c3.9873,1.02393,8.16669,1.56897,12.47345,1.56897,27.61426,0,50-22.3858,50-50,0-22.96716-15.49091-42.30396-36.59033-48.16632Z"/>
+    <g id="Item-Middle">
+      <circle id="BadStreamSpot-Middle" class="fillBlack" cx="443.85072" cy="256" r="16"/>
+      <path id="DistribtuionLine-Middle" class="isStroke strokeLine strokeBlack" d="M271.52116,251.44576c54.93211-26.54577,124.17609-32.17053,172.32956,4.55424" data-om-id="jsx:/Inline Babel script:2676:62:17"/>
+      <path id="StreamLine-Middle" class="isStroke strokeDashed strokeBlack" d="M443.85072,256c-52.89846,30.39685-117.39745,34.30079-172.32956,7.75502" data-om-id="jsx:/Inline Babel script:2757:63:17"/>
+    </g>
+    <g id="Item-Down">
+      <circle id="BadStreamSpot-Down" class="fillBlack" cx="431.85072" cy="316" r="16"/>
+      <path id="DistributionLine-Down" class="isStroke strokeLine strokeBlack" d="M271.52116,251.44576c62.56407-10.15392,134.41462,19.68268,160.32956,64.55424" data-om-id="jsx:/Inline Babel script:2676:62:17"/>
+      <path id="StreamLine-Down" class="isStroke strokeDashed strokeBlack" d="M431.85072,316c-60.05405,12.80103-122.68527-3.73452-160.32956-52.24498" data-om-id="jsx:/Inline Babel script:2757:63:17"/>
+    </g>
+    <g id="Item-Top">
+      <circle id="BadStreamSpot-Top" class="fillBlack" cx="431.85072" cy="196" r="16"/>
+      <path id="DistributionLine-Top" class="isStroke strokeLine strokeBlack" d="M271.52116,251.44576c42.58726-41.21506,101.20214-59.48338,160.32956-55.44576" data-om-id="jsx:/Inline Babel script:2676:62:17"/>
+      <path id="StreamLine-Top" class="isStroke strokeDashed strokeBlack" d="M431.85072,194.3945c-22.33696,38.97248-114.28932,72.44037-162.33973,71.03953" data-om-id="jsx:/Inline Babel script:2757:63:17"/>
+    </g>
+  </g>
+</svg>

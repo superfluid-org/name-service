@@ -3,6 +3,7 @@ import { Address } from "viem"
 import { ensResolver } from "./ens"
 import { farcasterResolver } from "./farcaster"
 import { polyThemesResolver } from "./polythemes"
+import { STATIC_SERVICE_NAMES, staticResolvers } from "./static"
 import { torexResolver } from "./torex"
 
 export type Profile = {
@@ -23,7 +24,13 @@ export interface Resolver {
   getAddress(handle: string): Promise<Profile | null>
 }
 
-export const resolvers: Resolver[] = [polyThemesResolver, torexResolver, ensResolver, farcasterResolver].map(resolver => ({
+export const resolvers: Resolver[] = [
+  ...staticResolvers,
+  polyThemesResolver,
+  torexResolver,
+  ensResolver,
+  farcasterResolver
+].map(resolver => ({
   ...resolver,
   getProfile: async (address: Address) => {
     console.time(`getProfile ${resolver.name}`)
@@ -33,30 +40,43 @@ export const resolvers: Resolver[] = [polyThemesResolver, torexResolver, ensReso
   }
 }))
 
+// Priority order: static registries -> ENS -> Farcaster -> PolyThemes -> TOREX.
+// Curated static entries win because they are an authoritative label for a known contract.
+const SERVICE_PRIORITY: string[] = [...STATIC_SERVICE_NAMES, "ENS", "Farcaster", "PolyThemes", "TOREX"]
+
 export function getRecommendedName(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: PolyThemes -> TOREX -> ENS -> Farcaster
-  return profiles.PolyThemes?.handle ||
-         profiles.TOREX?.handle ||
-         profiles.ENS?.handle ||
-         profiles.Farcaster?.handle ||
-         null
+  for (const service of SERVICE_PRIORITY) {
+    const handle = profiles[service]?.handle
+
+    if (handle) {
+      return handle
+    }
+  }
+
+  return null
 }
 
 export function getRecommendedAvatar(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: PolyThemes -> TOREX -> ENS -> Farcaster
-  return profiles.PolyThemes?.avatarUrl ||
-         profiles.TOREX?.avatarUrl ||
-         profiles.ENS?.avatarUrl ||
-         profiles.Farcaster?.avatarUrl ||
-         null
+  for (const service of SERVICE_PRIORITY) {
+    const avatarUrl = profiles[service]?.avatarUrl
+
+    if (avatarUrl) {
+      return avatarUrl
+    }
+  }
+
+  return null
 }
 
 export function getRecommendedService(profiles: Record<string, Profile | null>): string | null {
-  // Priority order: PolyThemes -> TOREX -> ENS -> Farcaster
   // Return the service that provided either the recommended name OR avatar
-  if (profiles.PolyThemes?.handle || profiles.PolyThemes?.avatarUrl) return "PolyThemes"
-  if (profiles.TOREX?.handle || profiles.TOREX?.avatarUrl) return "TOREX"
-  if (profiles.ENS?.handle || profiles.ENS?.avatarUrl) return "ENS"
-  if (profiles.Farcaster?.handle || profiles.Farcaster?.avatarUrl) return "Farcaster"
+  for (const service of SERVICE_PRIORITY) {
+    const profile = profiles[service]
+
+    if (profile?.handle || profile?.avatarUrl) {
+      return service
+    }
+  }
+
   return null
 }
