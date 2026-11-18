@@ -2,9 +2,13 @@
 
 This project provides an API to resolve profiles associated with blockchain addresses using various resolvers. The main functionality is implemented in `route.ts`, which handles incoming requests and queries different resolvers to fetch profile information.
 
+Base URL: `https://whois.superfluid.finance`
+
+Used by the Superfluid Dashboard and other apps (Explorer, claim app, Reporter, Supervisual).
+
 ## Features
 
-- Resolve profiles using multiple resolvers (ENS, AF, Farcaster, Lens).
+- Resolve profiles using multiple resolvers (ENS, Farcaster, TOREX, PolyThemes and static entries).
 - CORS support.
 - Edge runtime for fast response times.
 - Caching for improved performance.
@@ -133,7 +137,8 @@ precedence over testnets when reverse-resolving a name.
 
 1. Clone the repository.
 2. Install dependencies using `pnpm install`.
-3. Start the development server using `pnpm run dev`.
+3. Copy `.env.example` to `.env` and set `NEYNAR_API_KEY` (used by the Farcaster resolver).
+4. Start the development server using `pnpm run dev`.
 
 ## License
 
